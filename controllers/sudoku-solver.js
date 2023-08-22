@@ -1,37 +1,39 @@
 class SudokuSolver {
-  createArrayFromString(puzzle1D) {
+  constructor() {
+    this.size = 9;
+  }
+  create2DArray(puzzleString) {
+    let puzzle1D = puzzleString.split("").map((x) => (x === "." ? 0 : parseInt(x)));
     let puzzle2D = [];
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < this.size; i++) {
       puzzle2D.push(puzzle1D.splice(0, 9));
     }
     return puzzle2D;
   }
   validate(puzzleString) {}
-  checkRowPlacement(puzzle, row, column, value) {
-    // console.log("row", row, "col", column, "val", value);
-    for (let i = 0; i < 9; i++) {
-      if (puzzle[row][i] === value) {
-        return false;
-      }
-    }
-    // console.log("found the num", value);
-    return true;
-  }
-
-  checkColPlacement(puzzle, row, column, value) {
-    for (let j = 0; j < 9; j++) {
-      if (puzzle[j][column] === value) {
+  checkRowPlacement(puzzle, row, val) {
+    for (let i = 0; i < this.size; i++) {
+      if (puzzle[row][i] === val) {
         return false;
       }
     }
     return true;
   }
 
-  checkRegionPlacement(puzzle, row, column, value) {
-    let [regionRow, regionCol] = [row - (row % 3), column - (column % 3)];
-    for (let i = regionRow; i < 3; i++) {
-      for (let j = regionCol; j < 3; j++) {
-        if (puzzle[i][j] === value) {
+  checkColPlacement(puzzle, col, val) {
+    for (let j = 0; j < this.size; j++) {
+      if (puzzle[j][col] === val) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  checkSqrPlacement(puzzle, row, col, val) {
+    let [sqrSize, sqr1stRow, sqr1stCol] = [Math.sqrt(this.size), row - (row % sqrSize), col - (col % sqrSize)];
+    for (let i = sqr1stRow; i < sqrSize; i++) {
+      for (let j = sqr1stCol; j < sqrSize; j++) {
+        if (puzzle[i][j] === val) {
           return false;
         }
       }
@@ -40,38 +42,33 @@ class SudokuSolver {
   }
 
   solve(puzzle) {
-    // console.log("====>", puzzle);
-    // check if puzzle is solved (are there any dots in an array?)
-    let [r, c, dotFound] = [false, false, false];
-    for (let i = 0; i < 9; i++) {
-      if (dotFound) break;
-      for (let j = 0; j < 9; j++) {
-        if (puzzle[i][j] === ".") {
-          [r, c] = [i, j];
-          dotFound = true;
+    // check if the puzzle is solved (are there any zeros in the 2D array?):
+    let [row, col, zeros] = [false, false, false];
+    for (let i = 0; i < this.size; i++) {
+      if (zeros) break;
+      for (let j = 0; j < this.size; j++) {
+        if (puzzle[i][j] === 0) {
+          [row, col] = [i, j];
+          zeros = true;
           break;
         }
       }
     }
-    // if puzzle is solved:
-    if (!dotFound) {
-      console.log("the puzzle is solved", puzzle);
-      return true;
-    }
-    // if puzzle is not solved:
-    // create a loop from 1 to 9 to replace the first dot in the array
-    for (let v = 1; v < 9; v++) {
-      // if row, col, square check is true:
-      // recurse the function
-      if (this.checkRowPlacement(puzzle, r, c, v) && this.checkColPlacement(puzzle, r, c, v) && this.checkRegionPlacement(puzzle, r, c, v)) {
-        puzzle[r][c] = v;
+    // return "true" if the puzzle is solved:
+    if (!zeros) return true;
+    // else:
+    // brute-force values (from 1 to "this.size") to replace the first occurance of zero in the 2D array:
+    for (let val = 1; val <= this.size; val++) {
+      // if row, column and square puzzle validity checks are "true" for the new value, recurse the function until all zeros are replaced with new values
+      if (this.checkRowPlacement(puzzle, row, val) && this.checkColPlacement(puzzle, col, val) && this.checkSqrPlacement(puzzle, row, col, val)) {
+        puzzle[row][col] = val;
         if (this.solve(puzzle)) return true;
       } else {
-        puzzle[r][c] = ".";
+        // if puzzle validity checks fail, try next value (up to "this.size")
+        puzzle[row][col] = 0;
       }
-      // if all nums don't pass the check backtrack to previous recursion
     }
-    console.log("+++ puzzle +++", puzzle);
+    // if all values fail the puzzle validiy check, return "false" to backtrack to previous recursive iteration (do this until the puzzle is solved or return "false")
     return false;
   }
 }

@@ -7,7 +7,7 @@ module.exports = function (app) {
   app.route("/api/check").post((req, res) => {});
 
   app.route("/api/solve").post((req, res) => {
-    let puzzle2D = solver.createArrayFromString(req.body.puzzle.split("").map((x) => (x === "." ? "." : parseInt(x))));
+    let puzzle2D = solver.create2DArray(req.body.puzzle);
     let result = solver.solve(puzzle2D);
     console.log("result ======>", result);
   });
