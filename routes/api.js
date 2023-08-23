@@ -8,7 +8,13 @@ module.exports = function (app) {
 
   app.route("/api/solve").post((req, res) => {
     let puzzle2D = solver.create2DArray(req.body.puzzle);
-    let result = solver.solve(puzzle2D);
-    console.log("result ======>", result);
+    let validation = solver.validate(req.body.puzzle, puzzle2D);
+    if (validation !== true) {
+      console.log("validation ====>", validation);
+      res.json(validation);
+    } else {
+      let result = solver.solve(puzzle2D);
+      console.log("result ======>", result);
+    }
   });
 };
