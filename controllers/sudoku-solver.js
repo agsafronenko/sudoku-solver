@@ -1,6 +1,7 @@
 class SudokuSolver {
   constructor() {
     this.size = 9;
+    this.sqrSize = Math.sqrt(this.size);
   }
 
   create2DArray(puzzleString) {
@@ -26,11 +27,9 @@ class SudokuSolver {
       }
     }
     // check square placement:
-    let sqrSize = Math.sqrt(this.size);
-    let [sqrRow, sqrCol] = [row % sqrSize, col % sqrSize];
-    let [sqr1stRow, sqr1stCol] = [row - sqrRow, col - sqrCol];
-    for (let i = sqr1stRow; i < sqrSize; i++) {
-      for (let j = sqr1stCol; j < sqrSize; j++) {
+    let [sqr1stRow, sqr1stCol] = [row - (row % this.sqrSize), col - (col % this.sqrSize)];
+    for (let i = sqr1stRow; i < sqr1stRow + this.sqrSize; i++) {
+      for (let j = sqr1stCol; j < sqr1stCol + this.sqrSize; j++) {
         if (row !== i && col !== j && puzzle[i][j] === val) {
           return false;
         }
@@ -38,41 +37,13 @@ class SudokuSolver {
     }
     return true;
   }
-  // checkRowPlacement(puzzle, row, col, val) {
-  //   for (let i = 0; i < this.size; i++) {
-  //     if (col !== i && puzzle[row][i] === val) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
-
-  // checkColPlacement(puzzle, row, col, val) {
-  //   for (let j = 0; j < this.size; j++) {
-  //     if (row !== j && puzzle[j][col] === val) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
-
-  // checkSqrPlacement(puzzle, row, col, val) {
-  //   let sqrSize = Math.sqrt(this.size);
-  //   let [sqrRow, sqrCol] = [row % sqrSize, col % sqrSize];
-  //   let [sqr1stRow, sqr1stCol] = [row - sqrRow, col - sqrCol];
-  //   for (let i = sqr1stRow; i < sqrSize; i++) {
-  //     for (let j = sqr1stCol; j < sqrSize; j++) {
-  //       if (sqrRow !== i && sqrCol !== j && puzzle[i][j] === val) {
-  //         return false;
-  //       }
-  //     }
-  //   }
-  //   return true;
-  // }
 
   validate(puzzleString, puzzle2D) {
-    if (puzzleString.length !== this.size ** 2) return "Expected puzzle to be 81 characters long";
+    // check the size of the initial input
+    if (puzzleString.length !== this.size ** 2) return "Expected puzzle to be 'this.size ** 2' characters long";
+    // check for invalid characters in the initial input
     if (!/^[1-9.]+$/.test(puzzleString)) return "Invalid characters in puzzle";
+    // check whether the initial input doesn't break row, column and square placement rules:
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         if (puzzle2D[i][j] !== 0) {
@@ -104,16 +75,17 @@ class SudokuSolver {
     // else:
     // brute-force values (from 1 to "this.size") to replace the first occurance of zero in the 2D array:
     for (let val = 1; val <= this.size; val++) {
-      // if row, column and square puzzle validity checks are "true" for the new value, recurse until all zeros are replaced with new values
+      // if the new value passes the row, column and square placement checks, recurse the solve(puzzle) function until all zeros are replaced with new values
       if (this.checkPlacement(puzzle, row, col, val)) {
         puzzle[row][col] = val;
-        if (this.solve(puzzle)) return puzzle.flat().join("");
-      } else {
-        // if puzzle validity checks fail, try next value (up to "this.size")
-        puzzle[row][col] = 0;
+        if (this.solve(puzzle)) {
+          return puzzle.flat().join("");
+        } else {
+          puzzle[row][col] = 0;
+        }
       }
     }
-    // if all values fail the puzzle validiy check, return "false" to backtrack to previous recursive iteration (do this until the puzzle is solved otherwise return "Puzzle cannot be solved")
+    // if all values fail the row, column and square placement checks, return "false" to backtrack to previous recursive iteration (or, in case the puzzle can not be solved, after backtracking to the first function call, "false" will be returned as a result)
     return false;
   }
 }
