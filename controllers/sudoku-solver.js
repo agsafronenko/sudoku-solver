@@ -15,15 +15,16 @@ class SudokuSolver {
 
   checkPlacement(puzzle, row, col, val) {
     // check row placement:
+    let conflict = [];
     for (let i = 0; i < this.size; i++) {
       if (col !== i && puzzle[row][i] === val) {
-        return false;
+        conflict.push("row");
       }
     }
     // check column placement:
     for (let j = 0; j < this.size; j++) {
       if (row !== j && puzzle[j][col] === val) {
-        return false;
+        conflict.push("column");
       }
     }
     // check square placement:
@@ -31,30 +32,34 @@ class SudokuSolver {
     for (let i = sqr1stRow; i < sqr1stRow + this.sqrSize; i++) {
       for (let j = sqr1stCol; j < sqr1stCol + this.sqrSize; j++) {
         if (row !== i && col !== j && puzzle[i][j] === val) {
-          return false;
+          conflict.push("region");
         }
       }
     }
-    return true;
+    return conflict.length === 0 ? true : conflict;
   }
 
-  validate(puzzleString, puzzle2D) {
+  validate(puzzleString) {
+    // check if the initial input is missing
+    if (!puzzleString) return "Required field missing";
     // check the size of the initial input
-    if (puzzleString.length !== this.size ** 2) return "Expected puzzle to be 'this.size ** 2' characters long";
+    if (puzzleString.length !== this.size ** 2) return `Expected puzzle to be ${this.size ** 2} characters long`;
     // check for invalid characters in the initial input
     if (!/^[1-9.]+$/.test(puzzleString)) return "Invalid characters in puzzle";
+    // create 2D puzzle array:
+    let puzzle2D = this.create2DArray(puzzleString);
     // check whether the initial input doesn't break row, column and square placement rules:
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         if (puzzle2D[i][j] !== 0) {
           let [row, col, val] = [i, j, puzzle2D[i][j]];
-          if (!this.checkPlacement(puzzle2D, row, col, val)) {
+          if (Array.isArray(this.checkPlacement(puzzle2D, row, col, val))) {
             return "Puzzle cannot be solved";
           }
         }
       }
     }
-    return true;
+    return puzzle2D;
   }
 
   solve(puzzle) {
@@ -76,7 +81,7 @@ class SudokuSolver {
     // brute-force values (from 1 to "this.size") to replace the first occurance of zero in the 2D array:
     for (let val = 1; val <= this.size; val++) {
       // if the new value passes the row, column and square placement checks, recurse the solve(puzzle) function until all zeros are replaced with new values
-      if (this.checkPlacement(puzzle, row, col, val)) {
+      if (!Array.isArray(this.checkPlacement(puzzle, row, col, val))) {
         puzzle[row][col] = val;
         if (this.solve(puzzle)) {
           return puzzle.flat().join("");
