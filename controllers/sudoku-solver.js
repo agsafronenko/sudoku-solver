@@ -77,8 +77,7 @@ class SudokuSolver {
     }
     // return "true" if the puzzle is solved:
     if (!zeros) return true;
-    // else:
-    // brute-force values (from 1 to "this.size") to replace the first occurance of zero in the 2D array:
+    // else: brute-force values (from 1 to "this.size") to replace the first occurance of zero in the 2D array:
     for (let val = 1; val <= this.size; val++) {
       // if the new value passes the row, column and square placement checks, recurse the solve(puzzle) function until all zeros are replaced with new values
       if (!Array.isArray(this.checkPlacement(puzzle, row, col, val))) {
