@@ -29,7 +29,6 @@ class SudokuSolver {
     }
     // check square placement:
     let [sqr1stRow, sqr1stCol] = [row - (row % this.sqrSize), col - (col % this.sqrSize)];
-    console.log("===>", sqr1stRow, sqr1stCol);
     for (let i = sqr1stRow; i < sqr1stRow + this.sqrSize; i++) {
       for (let j = sqr1stCol; j < sqr1stCol + this.sqrSize; j++) {
         if (row !== i && col !== j && puzzle[i][j] === val) {
