@@ -1,6 +1,6 @@
 ## Web Page
 
-You can view the live version of this project hosted on GitHub Pages [here](https://glitch.com/edit/#!/spectacular-ubiquitous-snap?path=README.md%3A1%3A2).
+You can view the live version of this project hosted on glitch.com [here](https://glitch.com/edit/#!/spectacular-ubiquitous-snap?path=README.md%3A1%3A2).
 
 ## Sudoku Solver
 
