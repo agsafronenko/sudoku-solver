@@ -83,7 +83,10 @@ class SudokuSolver {
       if (!Array.isArray(this.checkPlacement(puzzle, row, col, val))) {
         puzzle[row][col] = val;
         if (this.solve(puzzle)) {
-          return puzzle.flat().join("");
+          function flattenArray(arr) {
+            return arr.reduce((acc, val) => (Array.isArray(val) ? acc.concat(flattenArray(val)) : acc.concat(val)), []);
+          }
+          return flattenArray(puzzle);
         } else {
           puzzle[row][col] = 0;
         }
