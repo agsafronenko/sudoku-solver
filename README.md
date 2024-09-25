@@ -1,6 +1,6 @@
 ## Web Page
 
-You can view the live version of this project hosted on [here](https://spectacular-ubiquitous-snap.glitch.me).
+You can view the live version of this project hosted on [here](https://humorous-sudsy-collard.glitch.me).
 
 ## Sudoku Solver
 
