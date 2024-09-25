@@ -1,84 +1,106 @@
-// const chai = require("chai");
-// const assert = chai.assert;
+const chai = require("chai");
+const assert = chai.assert;
 
-// const SudokuSolver = require("../controllers/sudoku-solver.js");
-// let solver = new SudokuSolver();
+const SudokuSolver = require("../controllers/sudoku-solver.js");
+let solver = new SudokuSolver();
 
-// suite("Unit Tests", () => {
-//   let validPuzzle = "759236.1.816495..2432178...174569...395842.6.62......9......1945....4..7.4.3..6..";
-//   test("Logic handles a valid puzzle string of 81 characters", (done) => {
-//     let puzzle = validPuzzle;
-//     assert.isArray(solver.validate(puzzle), true);
-//     assert.equal(solver.validate(puzzle).flat().length, 81);
-//     done();
-//   });
-//   test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", (done) => {
-//     let invalidCharacters = "..invalid..chars..";
-//     let puzzle = invalidCharacters + validPuzzle.slice(0, -invalidCharacters.length);
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.equal(puzzle2D, "Invalid characters in puzzle");
-//     done();
-//   });
-//   test("Logic handles a puzzle string that is not 81 characters in length", (done) => {
-//     let puzzle = validPuzzle + "......89";
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.equal(puzzle2D, "Expected puzzle to be 81 characters long");
-//     done();
-//   });
-//   test("Logic handles a valid row placement", (done) => {
-//     let puzzle = validPuzzle;
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.isTrue(solver.checkPlacement(puzzle2D, 8, 8, 5), true);
-//     done();
-//   });
-//   test("Logic handles an invalid row placement", (done) => {
-//     let puzzle = validPuzzle;
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.isArray(solver.checkPlacement(puzzle2D, 8, 8, 3), true);
-//     assert.deepEqual(solver.checkPlacement(puzzle2D, 8, 8, 3), ["row"]);
-//     done();
-//   });
-//   test("Logic handles a valid column placement", (done) => {
-//     let puzzle = validPuzzle;
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.isTrue(solver.checkPlacement(puzzle2D, 8, 8, 5), true);
-//     done();
-//   });
-//   test("Logic handles an invalid column placement", (done) => {
-//     let puzzle = validPuzzle;
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.isArray(solver.checkPlacement(puzzle2D, 8, 8, 2), true);
-//     assert.deepEqual(solver.checkPlacement(puzzle2D, 8, 8, 2), ["column"]);
-//     done();
-//   });
-//   test("Logic handles a valid region placement", (done) => {
-//     let puzzle = validPuzzle;
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.isTrue(solver.checkPlacement(puzzle2D, 8, 8, 5), true);
-//     done();
-//   });
-//   test("Logic handles an invalid region placement", (done) => {
-//     let puzzle = validPuzzle;
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.isArray(solver.checkPlacement(puzzle2D, 8, 8, 2), true);
-//     assert.deepEqual(solver.checkPlacement(puzzle2D, 8, 8, 1), ["region"]);
-//     done();
-//   });
-//   test("Valid puzzle strings pass the solver", (done) => {
-//     let puzzle = validPuzzle;
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.equal(solver.solve(puzzle2D), "759236418816495372432178956174569283395842761628713549283657194561924837947381625");
-//     done();
-//   });
-//   test("Invalid puzzle strings fail the solver", (done) => {
-//     let puzzle = validPuzzle.slice(0, -2) + "66";
-//     assert.equal(solver.validate(puzzle), "Puzzle cannot be solved");
-//     done();
-//   });
-//   test("Solver returns the expected solution for an incomplete puzzle", (done) => {
-//     let puzzle = ".".repeat(81);
-//     let puzzle2D = solver.validate(puzzle);
-//     assert.equal(solver.solve(puzzle2D), "123456789456789123789123456214365897365897214897214365531642978642978531978531642");
-//     done();
-//   });
-// });
+suite("Unit Tests", () => {
+    let validPuzzle = ".23......4567891237...23456214..58973658...14897214365531642..864297853197.5316.2";
+    let invalidPuzzle = "123456789123456789123456789123456789123456789123456789123456789123456789123456789";
+    let unsolvablePuzzle = "123456789123456789123456789123456789123456789123456789123456789123456789123456780";
+  
+    test("Valid puzzle string of 81 characters", () => {
+      assert.isArray(solver.validate(validPuzzle), true);
+      assert.equal(solver.validate(validPuzzle).flat().length, 81);
+    });
+  
+    test("Puzzle string with > 81 characters", () => {
+      assert.equal(solver.validate(validPuzzle + "1"), "Expected puzzle to be 81 characters long");
+    });
+  
+    test("Puzzle string with < 81 characters", () => {
+      assert.equal(solver.validate(validPuzzle.slice(0, 80)), "Expected puzzle to be 81 characters long");
+    });
+  
+    test("Puzzle string with invalid characters", () => {
+      let invalidCharPuzzle = validPuzzle.replace(".", "X");
+      assert.equal(solver.validate(invalidCharPuzzle), "Invalid characters in puzzle");
+    });
+  
+    test("Missing puzzle string", () => {
+      assert.equal(solver.validate(), "Required field missing");
+    });
+  
+    test("Solve valid puzzle", () => {
+      let solvedPuzzle = solver.solve(solver.validate(validPuzzle));
+      let actualSolution = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 4, 5, 6,
+        7, 8, 9, 1, 2, 3, 7, 8, 9, 1, 2, 3,
+        4, 5, 6, 2, 1, 4, 3, 6, 5, 8, 9, 7,
+        3, 6, 5, 8, 9, 7, 2, 1, 4, 8, 9, 7,
+        2, 1, 4, 3, 6, 5, 5, 3, 1, 6, 4, 2,
+        9, 7, 8, 6, 4, 2, 9, 7, 8, 5, 3, 1,
+        9, 7, 8, 5, 3, 1, 6, 4, 2
+      ]
+      assert.deepEqual(solvedPuzzle, actualSolution, "The solution should match the expected solution")
+    });
+  
+    test("Solve invalid puzzle", () => {
+      let validated = solver.validate(invalidPuzzle);
+      assert.equal(validated, "Puzzle cannot be solved");
+    });
+  
+    // Test 8: Unsolvable puzzle (should return false)
+    test("Unsolvable puzzle", () => {
+      let validated = solver.validate(unsolvablePuzzle);
+      let result = solver.solve(validated);
+      assert.equal(result, "Puzzle cannot be solved");
+    });
+  
+    // Test 9: Check row placement validity
+    test("Check valid row placement", () => {
+      let puzzle = solver.create2DArray(validPuzzle);
+      assert.isTrue(solver.checkPlacement(puzzle, 0, 0, 5));
+    });
+  
+    // Test 10: Check invalid row placement (should return conflict)
+    test("Check invalid row placement", () => {
+      let puzzle = solver.create2DArray(validPuzzle);
+      let conflict = solver.checkPlacement(puzzle, 0, 1, 4);
+      assert.deepEqual(conflict, ["row"]);
+    });
+  
+    // Test 11: Check valid column placement
+    test("Check valid column placement", () => {
+      let puzzle = solver.create2DArray(validPuzzle);
+      assert.isTrue(solver.checkPlacement(puzzle, 0, 0, 6));
+    });
+  
+    // Test 12: Check invalid column placement (should return conflict)
+    test("Check invalid column placement", () => {
+      let puzzle = solver.create2DArray(validPuzzle);
+      let conflict = solver.checkPlacement(puzzle, 1, 0, 4);
+      assert.deepEqual(conflict, ["column"]);
+    });
+  
+    // Test 13: Check valid square placement
+    test("Check valid square placement", () => {
+      let puzzle = solver.create2DArray(validPuzzle);
+      assert.isTrue(solver.checkPlacement(puzzle, 0, 0, 9));
+    });
+  
+    // Test 14: Check invalid square placement (should return conflict)
+    test("Check invalid square placement", () => {
+      let puzzle = solver.create2DArray(validPuzzle);
+      let conflict = solver.checkPlacement(puzzle, 1, 1, 3);
+      assert.deepEqual(conflict, ["region"]);
+    });
+  
+    // Test 15: Check placement in multiple rows, columns, and regions (should return all conflicts)
+    test("Check placement conflicts across row, column, and region", () => {
+      let puzzle = solver.create2DArray(validPuzzle);
+      puzzle[0][0] = 7; // Create conflict in row, column, and region
+      let conflicts = solver.checkPlacement(puzzle, 0, 0, 7);
+      assert.deepEqual(conflicts, ["row", "column", "region"]);
+    });
+  });

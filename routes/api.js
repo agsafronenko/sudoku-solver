@@ -17,6 +17,7 @@ module.exports = function (app) {
   });
 
   app.route("/api/solve").post((req, res) => {
+    // console.log("req.body.puzzle ====>", req.body.puzzle)
     let validated = solver.validate(req.body.puzzle);
     return !Array.isArray(validated) ? res.json({ error: validated }) : res.json({ solution: solver.solve(validated) });
   });

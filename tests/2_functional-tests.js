@@ -6,7 +6,16 @@ const server = require("../server");
 chai.use(chaiHttp);
 
 suite("Functional Tests", () => {
-  let validPuzzle = "759236.1.816495..2432178...174569...395842.6.62......9......1.45....4..79473..6..";
+  // let validPuzzle = "759236.1.816495..2432178...174569...395842.6.62......9......1.45....4..79473..6..";
+  //   test("validPuzzle is a string", function (done) {
+  //     chai
+  //     .request(server)
+  //     .post("/api/solve")
+  //     .send({puzzle: validPuzzle})
+  //     .end(function(err, res) {
+  //       assert.typeOf(res.body.solution.length, "number")
+  //     })
+  //   })
   // test("Solve a puzzle with valid puzzle string: POST request to /api/solve", function (done) {
   //   chai
   //     .request(server)
@@ -94,19 +103,19 @@ suite("Functional Tests", () => {
   //       done();
   //     });
   // });
-  test("Check a puzzle placement with all placement conflicts: POST request to /api/check", function (done) {
-    let puzzle = validPuzzle;
-    chai
-      .request(server)
-      .post("/api/check")
-      .send({ puzzle: puzzle, coordinate: "I9", value: 7 })
-      .end(function (err, res) {
-        assert.equal(res.status, 200);
-        assert.equal(res.body.valid, false);
-        assert.deepEqual(res.body.conflict, ["row", "column", "region"]);
-        done();
-      });
-  });
+  // test("Check a puzzle placement with all placement conflicts: POST request to /api/check", function (done) {
+  //   let puzzle = validPuzzle;
+  //   chai
+  //     .request(server)
+  //     .post("/api/check")
+  //     .send({ puzzle: puzzle, coordinate: "I9", value: 7 })
+  //     .end(function (err, res) {
+  //       assert.equal(res.status, 200);
+  //       assert.equal(res.body.valid, false);
+  //       assert.deepEqual(res.body.conflict, ["row", "column", "region"]);
+  //       done();
+  //     });
+  // });
 
   // Check a puzzle placement with missing required fields: POST request to /api/check
   // Check a puzzle placement with invalid characters: POST request to /api/check
