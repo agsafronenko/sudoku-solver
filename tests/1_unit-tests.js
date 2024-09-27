@@ -5,7 +5,9 @@ const SudokuSolver = require("../controllers/sudoku-solver.js");
 let solver = new SudokuSolver();
 
 suite("Unit Tests", () => {
-    let validPuzzle = ".23......4567891237...23456214..58973658...14897214365531642..864297853197.5316.2";
+    let validPuzzle = ".2...6...45..891237....3456214..5897.658...14.9721436..31642..8.4297853197.5316.2";
+    let validatedValidPuzzle = solver.validate(validPuzzle);
+    let invalidCharPuzzle = validPuzzle.replace(".", "X");
     let invalidPuzzle = "123456789123456789123456789123456789123456789123456789123456789123456789123456789";
     let unsolvablePuzzle = "111456789123456789123456789123456789123456789123456789123456789123456789123456788";
   
@@ -23,7 +25,6 @@ suite("Unit Tests", () => {
     });
   
     test("Puzzle string with invalid characters", () => {
-      let invalidCharPuzzle = validPuzzle.replace(".", "X");
       assert.equal(solver.validate(invalidCharPuzzle), "Invalid characters in puzzle");
     });
   
@@ -46,54 +47,35 @@ suite("Unit Tests", () => {
     });
   
     test("Solve invalid puzzle", () => {
-      let validatedPuzzle = solver.validate(invalidPuzzle);
-      assert.equal(validatedPuzzle, "Puzzle cannot be solved");
+      assert.equal(solver.validate(invalidPuzzle), "Puzzle cannot be solved");
     });
   
     test("Unsolvable puzzle", () => {
-      let validatedPuzzle = solver.validate(unsolvablePuzzle);
-      assert.equal(validatedPuzzle, "Puzzle cannot be solved");
+      assert.equal(solver.validate(unsolvablePuzzle), "Puzzle cannot be solved");
     });
   
-    test("Check valid row placement", () => {
-      let validatedPuzzle = solver.validate(validPuzzle);
-      let [row, column, value] = ["A", 1, 1]
-      // console.logsle", validatedPuzzle)
-      assert.isTrue(solver.checkPlacement(validatedPuzzle, row, column, value));
+    test("Check valid row/column/region placement", () => {
+      let [row, column, value] = [0, 0, 1]
+      assert.isTrue(solver.checkPlacement(validatedValidPuzzle, row, column, value));
     });
   
     test("Check invalid row placement", () => {
-      let puzzle = solver.create2DArray(validPuzzle);
-      let conflict = solver.checkPlacement(puzzle, 0, 1, 4);
-      assert.deepEqual(conflict, ["row"]);
-    });
-  
-    test("Check valid column placement", () => {
-      let puzzle = solver.create2DArray(validPuzzle);
-      assert.isTrue(solver.checkPlacement(puzzle, 0, 0, 6));
+      let [row, column, value] = [0, 0, 6]
+      assert.deepEqual(solver.checkPlacement(validatedValidPuzzle, row, column, value), ["row"]);
     });
   
     test("Check invalid column placement", () => {
-      let puzzle = solver.create2DArray(validPuzzle);
-      let conflict = solver.checkPlacement(puzzle, 1, 0, 4);
-      assert.deepEqual(conflict, ["column"]);
+      let [row, column, value] = [0, 0, 9]
+      assert.deepEqual(solver.checkPlacement(validatedValidPuzzle, row, column, value), ["column"]);
     });
   
-    test("Check valid square placement", () => {
-      let puzzle = solver.create2DArray(validPuzzle);
-      assert.isTrue(solver.checkPlacement(puzzle, 0, 0, 9));
-    });
-  
-    test("Check invalid square placement", () => {
-      let puzzle = solver.create2DArray(validPuzzle);
-      let conflict = solver.checkPlacement(puzzle, 1, 1, 3);
-      assert.deepEqual(conflict, ["region"]);
+    test("Check invalid region placement", () => {
+      let [row, column, value] = [0, 0, 5]
+      assert.deepEqual(solver.checkPlacement(validatedValidPuzzle, row, column, value), ["region"]);
     });
   
     test("Check placement conflicts across row, column, and region", () => {
-      let puzzle = solver.create2DArray(validPuzzle);
-      puzzle[0][0] = 7; // Create conflict in row, column, and region
-      let conflicts = solver.checkPlacement(puzzle, 0, 0, 7);
-      assert.deepEqual(conflicts, ["row", "column", "region"]);
+      let [row, column, value] = [0, 0, 2]
+      assert.deepEqual(solver.checkPlacement(validatedValidPuzzle, row, column, value), ["row", "column", "region"]);
     });
   });
