@@ -12,12 +12,12 @@ module.exports = function (app) {
     let validated = solver.validate(puzzle);
     if (!Array.isArray(validated)) return res.json({ error: validated });
     let [row, col, val] = [["A", "B", "C", "D", "E", "F", "G", "H", "I"].indexOf(coordinate[0]), coordinate[1] - 1, parseInt(value)];
+    console.log("-=-=-=-=-=-=-=-=-=-=-=-=", "row", row, "col", col, "val", val)
     let checkCoordinate = solver.checkPlacement(validated, row, col, val);
     return Array.isArray(checkCoordinate) ? res.json({ valid: false, conflict: checkCoordinate }) : res.json({ valid: true });
   });
 
   app.route("/api/solve").post((req, res) => {
-    // console.log("req.body.puzzle ====>", req.body.puzzle)
     let validated = solver.validate(req.body.puzzle);
     return !Array.isArray(validated) ? res.json({ error: validated }) : res.json({ solution: solver.solve(validated) });
   });
