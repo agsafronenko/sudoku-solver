@@ -7,7 +7,6 @@ let solver = new SudokuSolver();
 suite("Unit Tests", () => {
     let validPuzzle = ".2...6...45..891237....3456214..5897.658...14.9721436..31642..8.4297853197.5316.2";
     let validatedValidPuzzle = solver.validate(validPuzzle);
-    let invalidCharPuzzle = validPuzzle.replace(".", "X");
     let invalidPuzzle = "123456789123456789123456789123456789123456789123456789123456789123456789123456789";
     let unsolvablePuzzle = "111456789123456789123456789123456789123456789123456789123456789123456789123456788";
   
@@ -25,7 +24,7 @@ suite("Unit Tests", () => {
     });
   
     test("Puzzle string with invalid characters", () => {
-      assert.equal(solver.validate(invalidCharPuzzle), "Invalid characters in puzzle");
+      assert.equal(solver.validate(validPuzzle.replace(".", "X")), "Invalid characters in puzzle");
     });
   
     test("Missing puzzle string", () => {
