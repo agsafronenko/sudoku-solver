@@ -32,17 +32,9 @@ suite("Unit Tests", () => {
     });
   
     test("Solve valid puzzle", () => {
-      let solvedPuzzle = solver.solve(solver.validate(validPuzzle));
-      let actualSolution = [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 4, 5, 6,
-        7, 8, 9, 1, 2, 3, 7, 8, 9, 1, 2, 3,
-        4, 5, 6, 2, 1, 4, 3, 6, 5, 8, 9, 7,
-        3, 6, 5, 8, 9, 7, 2, 1, 4, 8, 9, 7,
-        2, 1, 4, 3, 6, 5, 5, 3, 1, 6, 4, 2,
-        9, 7, 8, 6, 4, 2, 9, 7, 8, 5, 3, 1,
-        9, 7, 8, 5, 3, 1, 6, 4, 2
-      ]
-      assert.deepEqual(solvedPuzzle, actualSolution, "The solution should match the expected solution")
+      let solvedPuzzle = solver.solve(solver.validate(validPuzzle)).join("")
+      let actualSolution = "123456789456789123789123456214365897365897214897214365531642978642978531978531642"
+      assert.equal(solvedPuzzle, actualSolution, "The solution should match the expected solution")
     });
   
     test("Solve invalid puzzle", () => {

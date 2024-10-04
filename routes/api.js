@@ -17,19 +17,13 @@ module.exports = function (app) {
   });
 
   app.route("/api/solve").post((req, res) => {
-    console.log("========================================");
-    console.log("========================================");
-    console.log("========================================");
-    console.log("req.body.puzzle")
-    console.log(req.body.puzzle)
     let validated = solver.validate(req.body.puzzle);
+
     if (!Array.isArray(validated)) {
       return res.json({ error: validated })
     } else {
-      res = res.json({ solution: solver.solve(validated) })
-      console.log("result")
-      console.log(res)
-      return res
+      let solvedPuzzle = solver.solve(validated).join("")
+      return res.json({ solution: solvedPuzzle })
     }
   });
 };
